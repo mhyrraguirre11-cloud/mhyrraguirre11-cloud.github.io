@@ -645,18 +645,177 @@
     .reveal-children.visible > *:nth-child(5) { opacity:1; transform:none; transition-delay:0.45s; }
 
     /* =============================================
-       RESPONSIVE
+       HAMBURGER MENU (mobile nav toggle)
+       Hidden on desktop, shown on mobile.
     ============================================= */
-    @media (max-width: 768px) {
-      #hero { grid-template-columns: 1fr; min-height: auto; padding-top: 7rem; }
-      .hero-right { display: none; }
-      #about .inner { grid-template-columns: 1fr; gap: 2rem; }
-      .stat-strip { gap: 2rem; }
-      .skill-row { grid-template-columns: 1fr; gap: 0.75rem; }
-      .project-row { grid-template-columns: 50px 1fr; }
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--text);
+      transition: all 0.3s;
+      transform-origin: center;
+    }
+
+    /* Animate hamburger into X when open */
+    .nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* Mobile nav dropdown */
+    .nav-links.open {
+      display: flex !important;
+      flex-direction: column;
+      position: fixed;
+      top: 61px; left: 0; right: 0;
+      background: rgba(250,250,248,0.98);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 8vw 2rem;
+      gap: 1.5rem;
+      z-index: 99;
+    }
+
+    /* =============================================
+       RESPONSIVE — TABLET (max 900px)
+    ============================================= */
+    @media (max-width: 900px) {
+      /* Hero shifts to single column */
+      #hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        padding-top: 7rem;
+        padding-bottom: 4rem;
+        gap: 2.5rem;
+      }
+
+      .hero-right { align-items: flex-start; }
+
+      .hero-card { max-width: 100%; }
+
+      /* About inner shifts to single column */
+      #about .inner {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      /* Contact inner shifts to single column */
+      #contact .inner {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+
+      /* Skill rows stack label above pills */
+      .skill-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      /* Project rows drop the tags column */
+      .project-row {
+        grid-template-columns: 50px 1fr;
+      }
+
       .project-tags { display: none; }
-      #contact .inner { grid-template-columns: 1fr; gap: 3rem; }
-      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+
+    /* =============================================
+       RESPONSIVE — MOBILE (max 600px)
+       More aggressive changes for small screens.
+    ============================================= */
+    @media (max-width: 600px) {
+
+      /* Nav: hide links, show hamburger */
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      nav { padding: 1.1rem 6vw; }
+
+      /* Sections: reduce padding so content breathes */
+      section { padding: 4rem 6vw; }
+      #about  { padding: 4rem 6vw; }
+      #contact { padding: 4rem 6vw; }
+
+      /* Hero */
+      #hero {
+        padding: 6rem 6vw 3rem;
+        gap: 2rem;
+      }
+
+      /* Hide the right card on very small screens */
+      .hero-right { display: none; }
+
+      .hero-name {
+        font-size: clamp(2.4rem, 11vw, 3.2rem);
+      }
+
+      .hero-desc { font-size: 0.95rem; }
+
+      /* Make CTA buttons full width */
+      .hero-cta { flex-direction: column; }
+      .btn-primary, .btn-ghost {
+        width: 100%;
+        text-align: center;
+      }
+
+      /* About */
+      #about .inner { gap: 1.5rem; }
+
+      .about-main p { font-size: 0.95rem; }
+
+      /* Stats strip wraps on tiny screens */
+      .stat-strip {
+        flex-wrap: wrap;
+        gap: 1.5rem;
+      }
+
+      /* Skills */
+      .skill-pill { font-size: 0.82rem; padding: 5px 12px; }
+
+      /* Projects */
+      .project-row {
+        grid-template-columns: 40px 1fr;
+        gap: 1rem;
+        padding: 1.5rem 0;
+      }
+
+      .project-num { font-size: 1.1rem; }
+      .project-title { font-size: 1.1rem; }
+      .project-desc { font-size: 0.85rem; }
+
+      /* Contact */
+      #contact .inner { gap: 2rem; }
+
+      .contact-big {
+        font-size: clamp(1.2rem, 5vw, 1.6rem);
+      }
+
+      .btn-light {
+        width: 100%;
+        text-align: center;
+      }
+
+      /* Footer stacks */
+      footer {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+        padding: 1.5rem 6vw;
+      }
+
+      /* Section title slightly smaller */
+      .section-title {
+        font-size: clamp(1.8rem, 8vw, 2.4rem);
+      }
     }
   </style>
 </head>
@@ -666,12 +825,16 @@
   <!-- NAV -->
   <nav>
     <a href="#hero" class="nav-logo">Denielle Mhyrr</a>
-    <ul class="nav-links">
+    <ul class="nav-links" id="navLinks">
       <li><a href="#about">About</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#projects">Projects</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
+    <!-- Hamburger button — only visible on mobile -->
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
 
   <!-- HERO -->
@@ -923,6 +1086,23 @@
       links.forEach(l => {
         l.style.color = '';
         if (l.getAttribute('href') === `#${current}`) l.style.color = 'var(--accent)';
+      });
+    });
+
+    // Hamburger menu toggle
+    const toggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('open');
+      navLinks.classList.toggle('open');
+    });
+
+    // Close menu when a nav link is clicked
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        toggle.classList.remove('open');
+        navLinks.classList.remove('open');
       });
     });
   </script>
